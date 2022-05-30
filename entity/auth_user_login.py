@@ -41,17 +41,29 @@
 #     "version": 1
 # }
 
+from datetime import datetime
+
 import faust
+from faust.models.fields import DatetimeField
 
 
-class LoginEventData(faust.Record):
+def parse_millis(ms):
+    return datetime.fromtimestamp(int(ms) / 1000)
+
+
+class LoginEventData(faust.Record, coerce=True):
     user_id: int
-    device: dict
-    lang: str
-    ip: str
-    is_register: bool
-    time: int
+    # device: dict
+    # ip: str
+    time: datetime = DatetimeField(date_parser=parse_millis)
 
 
 class LoginEvent(faust.Record):
     data: LoginEventData
+
+
+class LoginCheckinEvent(faust.Record):
+    user_id: int
+    count: int
+    from_time: int
+    to_time: int
