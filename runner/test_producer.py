@@ -17,19 +17,15 @@ class LoginEvent(faust.Record):
 
 
 app = faust.App(
-    'login_processor',
+    'test_producer',
     broker=KAFKA_URI,
     web_enabled=False,
-    web_port=7002,
     store="memory://",
-    consumer_auto_offset_reset="earliest",
+    topic_partitions=1,
     broker_max_poll_records=1)
 
 
-login_topic = app.topic(
-    'user_login_test',
-    value_type=LoginEvent,
-)
+login_topic = app.topic('user_login', value_type=LoginEvent, partitions=1)
 
 
 @app.timer(1)
